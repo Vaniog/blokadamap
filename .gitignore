@@ -7,8 +7,5 @@ app/.env
 # IDE
 .idea/
 
-# Docker
-Dockerfile
-
 # Cache
 __pycache__
