@@ -2,7 +2,7 @@
 venv/
 
 # env
-app/.env
+.env
 
 # IDE
 .idea/

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HOST=${HOST:-0.0.0.0}
-PORT=${PORT:-8080}
+APP_HOST=${HOST:-0.0.0.0}
+APP_PORT=${APP_PORT:-8080}
 
-uvicorn app.main:app --reload --proxy-headers --host $HOST --port $PORT
+exec uvicorn app.main:app --reload --proxy-headers --host "$APP_HOST" --port "$APP_PORT"

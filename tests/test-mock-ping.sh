@@ -1,3 +1,5 @@
 #!/bin/bash
 
-curl -d "" -X GET http://localhost:8080/records/ping
+APP_PORT=${APP_PORT:-8080}
+
+curl -d "" -X GET "http://localhost:$APP_PORT/records/ping"

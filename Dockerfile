@@ -13,5 +13,6 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 # Копируем весь код в рабочую директорию
 COPY ./scripts /code/scripts
 COPY ./app /code/app
+COPY ./.env /code/.env
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["./scripts/start-dev.sh"]
