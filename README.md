@@ -2,10 +2,13 @@
 
 Чтобы запустить у себя:
 
-1. Создайте файл .env скопировав .env.example,
-2. Определите переменные окружения (на данный момент существенна только DATABASE_URL)
-
 ####  3. Напрямую (консоль bash)
+
+У вас должен быть локально поднят postgres. Если вам не хочется этого делать, советую запускать через Docker
+
+1. Создайте файл .env скопировав .env.example,
+2. Определите переменные окружения
+
 
     # На данный момент версия Python 3.10
     # Создание виртуального окружения
@@ -17,9 +20,20 @@
     ./scripts/start-dev.sh
 
     # Тесты
-    ./tests/test-mock-ping.sh
+    ./scripts/tests/test-mock-ping.sh
 
-#### 3. Через Docker (скорее всего это не понадобится)
+#### 3. Через Docker (теперь это удобно)
     
-    ./scripts/docker/build.sh
-    ./scripts/docker/run.sh
+1. Устанавливаете докер 
+2. Копируете docker/.env.docker.example в /docker/.env.docker и определяете переменные окружения (можно оставить как есть)
+
+
+    # build
+    ./scripts/docker/build-dev.sh
+    # up
+    ./scripts/docker/run-dev.sh
+    # Тесты
+    ./scripts/tests/test-mock-ping.sh
+    
+    
+На 8080 порту запустится приложение fastapi, на 5432 postgres, на 1000 adminer (супер легковесный веб интерфейс для взаимодействия с базой)

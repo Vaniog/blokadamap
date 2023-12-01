@@ -13,6 +13,5 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 # Копируем весь код в рабочую директорию
 COPY ./scripts /code/scripts
 COPY ./app /code/app
-COPY ./.env /code/.env
 
 CMD ["./scripts/start-dev.sh"]

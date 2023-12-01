@@ -3,7 +3,7 @@ venv/
 
 # env
 .env
-
+/docker/.env.docker
 # IDE
 .idea/
 

@@ -1,0 +1,27 @@
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: ./docker/fastapi/Dockerfile
+    env_file:
+      - docker/.env.docker
+    ports:
+      - '8080:8080'
+    depends_on:
+      - database
+  database:
+    image: postgres:15
+    restart: unless-stopped
+    env_file:
+      - docker/.env.docker
+    volumes:
+      - data:/var/lib/postgresql
+    ports:
+      - '5432:5432'
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - '1000:8080'
+volumes:
+  data:

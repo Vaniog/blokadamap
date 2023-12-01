@@ -7,7 +7,15 @@ load_dotenv(os.path.join(basedir, "..", ".env"))
 
 
 class Config(BaseSettings):
-    DATABASE_URL: str = os.environ.get("DATABASE_URL")
+    POSTGRES_DB: str = os.environ.get('POSTGRES_DB')
+    POSTGRES_HOST: str = os.environ.get('POSTGRES_HOST')
+    POSTGRES_USER: str = os.environ.get('POSTGRES_USER')
+    POSTGRES_PASSWORD: str = os.environ.get('POSTGRES_PASSWORD')
+    POSTGRES_PORT: str = os.environ.get("POSTGRES_PORT") or 5432
+
+    DATABASE_URL: str = \
+        "postgresql://" + POSTGRES_USER + ":" + POSTGRES_PASSWORD + \
+        "@" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB
 
 
 config = Config()
