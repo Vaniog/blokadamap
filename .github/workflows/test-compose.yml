@@ -1,0 +1,30 @@
+name: Test compose building
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+    - gh-actions-tests
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  docker:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Setup .env.docker
+      run: cp docker/.env.docker.example docker/.env.docker
+
+    - name: Start containers
+      run: docker-compose -f "docker-compose.yaml" --env-file "docker/.env.docker.example" up -d --build
+
+    - name: Stop containers
+      if: always()
+      run: docker-compose -f "docker-compose.yaml" --env-file "docker/.env.docker.example" down
