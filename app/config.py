@@ -1,21 +1,30 @@
 import os
-from dotenv import load_dotenv
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, "..", ".env"))
+env_path = os.path.join(basedir, "..", ".env")
 
 
 class Config(BaseSettings):
-    POSTGRES_DB: str = os.environ.get('POSTGRES_DB')
-    POSTGRES_HOST: str = os.environ.get('POSTGRES_HOST')
-    POSTGRES_USER: str = os.environ.get('POSTGRES_USER')
-    POSTGRES_PASSWORD: str = os.environ.get('POSTGRES_PASSWORD')
-    POSTGRES_PORT: str = os.environ.get("POSTGRES_PORT") or 5432
+    model_config = SettingsConfigDict(env_file=env_path)
+    POSTGRES_DB: str = Field(alias="POSTGRES_DB", description="postgre's db")
+    POSTGRES_HOST: str = Field(alias="POSTGRES_HOST", description="postgre's host")
+    POSTGRES_USER: str = Field(alias="POSTGRES_USER", description="postgre's user")
+    POSTGRES_PASSWORD: str = Field(
+        alias="POSTGRES_PASSWORD", description="postgre's password"
+    )
+    POSTGRES_PORT: int = Field(
+        default=5432,
+        alias="POSTGRES_PORT",
+        description="postgre's port",
+        ge=0,
+        le=65535,
+    )
 
-    DATABASE_URL: str = \
-        "postgresql://" + POSTGRES_USER + ":" + POSTGRES_PASSWORD + \
-        "@" + POSTGRES_HOST + ":" + POSTGRES_PORT + "/" + POSTGRES_DB
+    @property
+    def DATABASE_URL(self) -> str:
+        return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
 
 
-config = Config()
+config = Config()  # type: ignore
