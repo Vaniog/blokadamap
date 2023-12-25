@@ -1,6 +1,14 @@
-name: Lint
+name: MyPy
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+    - gh-actions-tests
+  pull_request:
+    branches:
+    - main
 
 jobs:
   mypy:
