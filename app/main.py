@@ -1,9 +1,8 @@
 from fastapi import FastAPI
 
-from app.database import engine, metadata
+from app.base.models import Base
+from app.database import engine
 
-metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-# app.include_router(mock_router, prefix="/records")
-# закомиться пж
