@@ -6,12 +6,14 @@ from sqlalchemy import (
     SmallInteger,
     Text,
     UniqueConstraint,
+    PrimaryKeyConstraint,
 )
 from sqlalchemy.orm import mapped_column
 from app.base.models import *
 
 
 class Many2ManyAuthorsBase(Base):
+    __abstract__ = True
     author_id = mapped_column(
         "author_id", SmallInteger, ForeignKey("author.author_id"), nullable=False
     )
@@ -53,13 +55,14 @@ class AuthorToPoint(Base):
         "author_id", SmallInteger, ForeignKey("author.author_id"), nullable=False
     )
     point_id = mapped_column(
-        "point_id", SmallInteger, ForeignKey("points.point_id"), nullable=False
+        "point_id", SmallInteger, ForeignKey("point.point_id"), nullable=False
     )  # DONT FORGET TO EDIT
     date_start = mapped_column("from", Date, nullable=False)
     date_end = mapped_column("to", Date, nullable=False)
     description = mapped_column("description", Text, nullable=False)
     __table_args__ = (
         UniqueConstraint("author_id", "point_id", name="_author_to_point_uc"),
+        PrimaryKeyConstraint('author_id', 'point_id'),
     )
 
     def __init__(
@@ -175,6 +178,7 @@ class Author2FamilyStatus(Many2ManyAuthorsBase):
         UniqueConstraint(
             "author_id", "family_status_id", name="_author_to_family_status_id_uc"
         ),
+        PrimaryKeyConstraint('author_id', 'family_status_id'),
     )
 
     def __init__(self, author_id: SmallInteger, family_status_id: SmallInteger):
@@ -194,6 +198,7 @@ class Author2PoliticalParty(Many2ManyAuthorsBase):
         UniqueConstraint(
             "author_id", "political_party_id", name="_author_to_political_party_uc"
         ),
+        PrimaryKeyConstraint('author_id', 'political_party_id'),
     )
 
     def __init__(self, author_id: SmallInteger, political_party_id: SmallInteger):
@@ -210,6 +215,7 @@ class Author2Religion(Many2ManyAuthorsBase):
         UniqueConstraint(
             "author_id", "religion_id", name="_author_to_political_party_uc"
         ),
+        PrimaryKeyConstraint('author_id', 'religion_id'),
     )
 
     def __init__(self, author_id: SmallInteger, religion_id: SmallInteger):
@@ -229,6 +235,7 @@ class Author2SocialClass(Many2ManyAuthorsBase):
         UniqueConstraint(
             "author_id", "social_class_id", name="_author_to_social_class_uc"
         ),
+        PrimaryKeyConstraint('author_id', 'social_class_id'),
     )
 
     def __init__(self, author_id: SmallInteger, social_class_id: SmallInteger):
@@ -248,6 +255,7 @@ class Author2Nationality(Many2ManyAuthorsBase):
         UniqueConstraint(
             "author_id", "nationality_id", name="_author_to_nationality_uc"
         ),
+        PrimaryKeyConstraint('author_id', 'nationality_id'),
     )
 
     def __init__(self, author_id: SmallInteger, nationality_id: SmallInteger):
@@ -265,6 +273,7 @@ class Author2Education(Many2ManyAuthorsBase):
     )
     __table_args__ = (
         UniqueConstraint("author_id", "education_id", name="_author_to_education_uc"),
+        PrimaryKeyConstraint('author_id', 'education_id'),
     )
 
     def __init__(self, author_id: SmallInteger, education_id: SmallInteger):
@@ -282,6 +291,7 @@ class Author2Occupation(Many2ManyAuthorsBase):
     )
     __table_args__ = (
         UniqueConstraint("author_id", "occupation_id", name="_author_to_occupation_uc"),
+        PrimaryKeyConstraint('author_id', 'occupation_id'),
     )
 
     def __init__(self, author_id: SmallInteger, occupation_id: SmallInteger):
@@ -296,6 +306,7 @@ class Author2Card(Many2ManyAuthorsBase):
     )
     __table_args__ = (
         UniqueConstraint("author_id", "card_id", name="_author_to_card_uc"),
+        PrimaryKeyConstraint('author_id', 'card_id'),
     )
 
     def __init__(self, author_id: SmallInteger, card_id: SmallInteger):
