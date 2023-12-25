@@ -6,6 +6,7 @@ from sqlalchemy import (
     SmallInteger,
     Text,
     UniqueConstraint,
+    PrimaryKeyConstraint,
 )
 from sqlalchemy.orm import mapped_column
 from app.base.models import *
@@ -119,4 +120,5 @@ class PointCoordinates(Base):
     )  # что то решить с координатами
     __table_args__ = (
         UniqueConstraint("point_id", "coordinates", name="_point_to_coordinates_uc"),
+        PrimaryKeyConstraint('point_id'),
     )

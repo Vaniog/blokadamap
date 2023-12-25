@@ -213,7 +213,7 @@ class Author2Religion(Many2ManyAuthorsBase):
     )
     __table_args__ = (
         UniqueConstraint(
-            "author_id", "religion_id", name="_author_to_political_party_uc"
+            "author_id", "religion_id", name="_author_to_religion_uc"
         ),
         PrimaryKeyConstraint('author_id', 'religion_id'),
     )
