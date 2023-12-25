@@ -19,12 +19,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v1
 
-    - name: Setup .env.docker
-      run: cp docker/.env.docker.example docker/.env.docker
+    - name: Setup .env
+      run: cp .env.example .env
 
     - name: Start containers
-      run: docker-compose -f "docker-compose.yaml" --env-file "docker/.env.docker.example" up -d --build
+      run: docker-compose -f "docker-compose.yaml" --env-file ".env.example" up -d --build
 
     - name: Stop containers
       if: always()
-      run: docker-compose -f "docker-compose.yaml" --env-file "docker/.env.docker.example" down
+      run: docker-compose -f "docker-compose.yaml" --env-file ".env.example" down

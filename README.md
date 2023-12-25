@@ -26,15 +26,13 @@
 #### Через Docker (теперь это удобно)
     
 1. Устанавливаете докер 
-2. Копируете docker/.env.docker.example в /docker/.env.docker и определяете переменные окружения (можно оставить как есть)
+2. Копируете .env.example в .env и определяете переменные окружения (можно оставить как есть)
 
 ```
     # build
-    ./scripts/docker/build-dev.sh
+    docker compose build
     # up
-    ./scripts/docker/run-dev.sh
-    # Тесты
-    ./scripts/tests/test-mock-ping.sh
+    docker compose up
 ```
     
 На 8080 порту запустится приложение fastapi, на 5432 postgres, 
@@ -42,7 +40,7 @@
 
 #### Про adminer:
 Если запуск получится, то на localhost:1000 будет запущен adminer \
-Если вы не меняли docker/.env.docker.example при копировании, то credentials для доступа такие:
+Если вы не меняли .env.example при копировании, то credentials для доступа такие:
 
     System: PostgreSQL
     Server: database
@@ -53,3 +51,4 @@
 P.s. Неочевидный нюанс в том, что server это database, а не localhost,
 это связано с тем, что контейнеры для себя создают свою сеть, и в этой сети нету localhost.
 Вместо этого в качестве адресов контейнеров выступают названия их как сервисов (как прописано в docker-compose.yaml) 
+P.p.s На самом деле вроде можно и localhost, можете проверить

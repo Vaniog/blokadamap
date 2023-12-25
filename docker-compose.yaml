@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: ./docker/fastapi/Dockerfile
     env_file:
-      - docker/.env.docker
+      - .env
     ports:
       - '8080:8080'
     depends_on:
@@ -13,7 +13,7 @@ services:
     image: postgres:15
     restart: unless-stopped
     env_file:
-      - docker/.env.docker
+      - .env
     volumes:
       - data:/var/lib/postgresql
     ports:
