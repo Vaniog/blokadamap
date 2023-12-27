@@ -1,6 +1,5 @@
 services:
   fastapi:
-    network_mode: "host"
     build:
       context: .
       dockerfile: ./docker/fastapi/Dockerfile
