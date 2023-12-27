@@ -1,8 +1,9 @@
-from sqlalchemy import VARCHAR, SmallInteger
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import mapped_column
+from sqlalchemy import VARCHAR
+from sqlalchemy.orm import DeclarativeBase, mapped_column
 
-Base = declarative_base()
+
+class Base(DeclarativeBase):
+    pass
 
 
 class ExtendedBaseClass(Base):
