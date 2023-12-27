@@ -26,4 +26,4 @@ jobs:
         run: pip install -r requirements/requirements.txt
       - name: Run mypy
         shell: bash
-        run: mypy --ignore-missing-imports .
+        run: mypy app
