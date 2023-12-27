@@ -1,4 +1,4 @@
-from geoalchemy2 import Geometry
+from geoalchemy2 import Geography
 from sqlalchemy import (
     VARCHAR,
     Boolean,
@@ -9,7 +9,10 @@ from sqlalchemy import (
     PrimaryKeyConstraint,
 )
 from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
 from app.base.models import *
+from app.authors.models import Author2Point
+from app.notes.models import NoteToPoint
 
 
 class Rayon(ExtendedBaseClass):
@@ -52,6 +55,7 @@ class PointSubType(ExtendedBaseClass):
         ForeignKey("point_type.point_type_id"),
         nullable=False,
     )
+    point_type = relationship("PointType", back_populates="point_subtype")
 
 
 class PointSubSubType(ExtendedBaseClass):
@@ -69,6 +73,7 @@ class PointSubSubType(ExtendedBaseClass):
         ForeignKey("point_subtype.point_subtype_id"),
         nullable=False,
     )
+    point_subtype = relationship("PointSubType", back_populates="point_subsubtype")
 
 
 class Point(ExtendedBaseClass):
@@ -89,36 +94,24 @@ class Point(ExtendedBaseClass):
     has_shelter = mapped_column("has_shelter", Boolean)
     description = mapped_column("description", Text)
 
-    def __init__(
-        self,
-        rayon_id: SmallInteger,
-        street_id: SmallInteger,
-        building: VARCHAR,
-        point_subsubtype: SmallInteger,
-        is_destroyed: Boolean,
-        has_shelter: Boolean,
-        name: VARCHAR,
-        description: Text,
-    ):
-        super().__init__(name)
-        self.rayon_id = rayon_id
-        self.street_id = street_id
-        self.building = building
-        self.point_subsubtype = point_subsubtype
-        self.is_destroyed = is_destroyed
-        self.has_shelter = has_shelter
-        self.description = description
+    rayon = relationship("Rayon", back_populates="point")
+    street = relationship("Street", back_populates="point")
+    point_subsubtype = relationship("PointSubSubType", back_populates="point")
+    author = relationship('Author', secondary=Author2Point, back_populates='point')
+    notes = relationship("Note", secondary=NoteToPoint, back_populates="point")
 
 
-class PointCoordinates(Base):
-    __tablename__ = "point_coordinates"
-    point_id = mapped_column(
-        "point_id", SmallInteger, ForeignKey("point.point_id"), nullable=False
-    )
-    coordinates = mapped_column(
-        "coordinates", Geometry("POINT"), nullable=False
-    )  # что то решить с координатами
-    __table_args__ = (
-        UniqueConstraint("point_id", "coordinates", name="_point_to_coordinates_uc"),
-        PrimaryKeyConstraint('point_id'),
-    )
+
+# class PointCoordinates(Base):
+#     __tablename__ = "point_coordinates"
+#     point_id = mapped_column(
+#         "point_id", SmallInteger, ForeignKey("point.point_id"), nullable=False
+#     )
+#     coordinates = mapped_column(
+#         "coordinates", Geography(geometry_type='POINT'), nullable=False
+#     )
+#     __table_args__ = (
+#         UniqueConstraint("point_id", "coordinates", name="_point_to_coordinates_uc"),
+#         PrimaryKeyConstraint('point_id'),
+#     )
+#     point = relationship("Point", back_populates="point_coordinates")
