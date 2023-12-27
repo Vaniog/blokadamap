@@ -44,9 +44,9 @@
 
     System: PostgreSQL
     Server: database
-    Username: root
-    Password: root
-    Database: db
+    Username: postgres
+    Password: postgres
+    Database: postgres
 
 P.s. Неочевидный нюанс в том, что server это database, а не localhost,
 это связано с тем, что контейнеры для себя создают свою сеть, и в этой сети нету localhost.
