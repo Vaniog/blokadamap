@@ -75,6 +75,12 @@ class Point(ExtendedBaseClass):
     rayon_id = mapped_column("rayon_id", SmallInteger, ForeignKey("rayon.rayon_id"))
     street_id = mapped_column("street_id", SmallInteger, ForeignKey("street.street_id"))
     building = mapped_column("building", VARCHAR(15))
+    point_subsubtype_id = mapped_column(
+        "point_subsubtype",
+        SmallInteger,
+        ForeignKey("point_subsubtype.point_subsubsubtype_id"),
+        nullable=False,
+    )
     is_destroyed = mapped_column("is_destroyed", Boolean, nullable=False)
     has_shelter = mapped_column("has_shelter", Boolean)
     description = mapped_column("description", Text)
