@@ -1,17 +1,8 @@
-from geoalchemy2 import Geography
-from sqlalchemy import (
-    VARCHAR,
-    Boolean,
-    ForeignKey,
-    SmallInteger,
-    Text,
-    UniqueConstraint,
-    PrimaryKeyConstraint,
-)
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-from app.base.models import *
+from sqlalchemy import VARCHAR, Boolean, ForeignKey, SmallInteger, Text
+from sqlalchemy.orm import mapped_column, relationship
+
 from app.authors.models import Author2Point
+from app.base.models import *
 from app.notes.models import NoteToPoint
 
 
@@ -84,12 +75,6 @@ class Point(ExtendedBaseClass):
     rayon_id = mapped_column("rayon_id", SmallInteger, ForeignKey("rayon.rayon_id"))
     street_id = mapped_column("street_id", SmallInteger, ForeignKey("street.street_id"))
     building = mapped_column("building", VARCHAR(15))
-    point_subsubtype = mapped_column(
-        "point_subsubtype",
-        SmallInteger,
-        ForeignKey("point_subsubtype.point_subsubsubtype_id"),
-        nullable=False,
-    )
     is_destroyed = mapped_column("is_destroyed", Boolean, nullable=False)
     has_shelter = mapped_column("has_shelter", Boolean)
     description = mapped_column("description", Text)
@@ -97,9 +82,8 @@ class Point(ExtendedBaseClass):
     rayon = relationship("Rayon", back_populates="point")
     street = relationship("Street", back_populates="point")
     point_subsubtype = relationship("PointSubSubType", back_populates="point")
-    author = relationship('Author', secondary=Author2Point, back_populates='point')
+    author = relationship("Author", secondary=Author2Point, back_populates="point")
     notes = relationship("Note", secondary=NoteToPoint, back_populates="point")
-
 
 
 # class PointCoordinates(Base):
@@ -115,3 +99,7 @@ class Point(ExtendedBaseClass):
 #         PrimaryKeyConstraint('point_id'),
 #     )
 #     point = relationship("Point", back_populates="point_coordinates")
+
+
+def init():
+    pass
