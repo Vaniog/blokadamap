@@ -1,111 +1,71 @@
-from sqlalchemy import VARCHAR, Boolean, ForeignKey, SmallInteger, Text
-from sqlalchemy.orm import mapped_column, relationship
-
-from app.authors.models import Author2Point
+from sqlalchemy import String, Text, ForeignKey, Column
+import datetime
 from app.base.models import *
-from app.notes.models import NoteToPoint
+from typing import List
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
+from typing import Optional
+from app.notes.models import note2point
+from app.authors.models import author2point
 
 
 class Rayon(ExtendedBaseClass):
-    __tablename__ = "rayon"
-    rayon_id = mapped_column(
-        "rayon_id", SmallInteger, primary_key=True, autoincrement=True, nullable=False
-    )
-
-
-class Street(ExtendedBaseClass):
-    __tablename__ = "street"
-    street_id = mapped_column(
-        "street_id", SmallInteger, primary_key=True, autoincrement=True, nullable=False
-    )
+    __tablename__ = 'rayon'
+    rayon_id: Mapped[intpk]
+    points: Mapped[List["Point"]] = relationship(back_populates="rayon")
 
 
 class PointType(ExtendedBaseClass):
-    __tablename__ = "point_type"
-    point_type_id = mapped_column(
-        "point_type_id",
-        SmallInteger,
-        primary_key=True,
-        autoincrement=True,
-        nullable=False,
-    )
+    __tablename__ = 'point_type'
+    point_type_id: Mapped[intpk]
+    has_fixed_coordinates: Mapped[bool] = mapped_column(nullable=False)
+    has_address: Mapped[bool] = mapped_column(nullable=False)
+    points: Mapped[List["Point"]] = relationship(back_populates="point_type")
+    point_subtypes: Mapped[List["PointSubType"]] = relationship(back_populates="point_type")
 
 
 class PointSubType(ExtendedBaseClass):
-    __tablename__ = "point_subtype"
-    point_subtype_id = mapped_column(
-        "point_subtype_id",
-        SmallInteger,
-        primary_key=True,
-        autoincrement=True,
-        nullable=False,
-    )
-    point_type_id = mapped_column(
-        "point_type_id",
-        SmallInteger,
-        ForeignKey("point_type.point_type_id"),
-        nullable=False,
-    )
-    point_type = relationship("PointType", back_populates="point_subtype")
+    __tablename__ = 'point_subtype'
+    point_subtype_id: Mapped[intpk]
+    point_type_id: Mapped[Optional[int]] = mapped_column(ForeignKey("point_type.point_type_id"))
+    point_type: Mapped[Optional["PointType"]] = relationship(back_populates="point_subtypes")
+
+    points: Mapped[List["Point"]] = relationship(back_populates="point_subtype")
+    point_subsubtypes: Mapped[List["PointSubSubType"]] = relationship(back_populates="point_subtype")
 
 
 class PointSubSubType(ExtendedBaseClass):
-    __tablename__ = "point_subsubtype"
-    point_subsubtype_id = mapped_column(
-        "point_subsubsubtype_id",
-        SmallInteger,
-        primary_key=True,
-        autoincrement=True,
-        nullable=False,
-    )
-    point_subtype_id = mapped_column(
-        "point_subtype_id",
-        SmallInteger,
-        ForeignKey("point_subtype.point_subtype_id"),
-        nullable=False,
-    )
-    point_subtype = relationship("PointSubType", back_populates="point_subsubtype")
+    __tablename__ = 'point_subsubtype'
+    point_subsubtype_id: Mapped[intpk]
+    point_subtype_id: Mapped[Optional[int]] = mapped_column(ForeignKey("point_subtype.point_subtype_id"))
+    point_subtype: Mapped[Optional["PointSubType"]] = relationship(back_populates="point_subsubtypes")
+    points: Mapped[List["Point"]] = relationship(back_populates="point_subsubtype")
 
 
 class Point(ExtendedBaseClass):
-    __tablename__ = "point"
-    point_id = mapped_column(
-        "point_id", SmallInteger, autoincrement=True, primary_key=True, nullable=False
-    )
-    rayon_id = mapped_column("rayon_id", SmallInteger, ForeignKey("rayon.rayon_id"))
-    street_id = mapped_column("street_id", SmallInteger, ForeignKey("street.street_id"))
-    building = mapped_column("building", VARCHAR(15))
-    point_subsubtype_id = mapped_column(
-        "point_subsubtype",
-        SmallInteger,
-        ForeignKey("point_subsubtype.point_subsubsubtype_id"),
-        nullable=False,
-    )
-    is_destroyed = mapped_column("is_destroyed", Boolean, nullable=False)
-    has_shelter = mapped_column("has_shelter", Boolean)
-    description = mapped_column("description", Text)
+    __tablename__ = 'point'
+    point_id: Mapped[intpk]
+    rayon_id: Mapped[int] = mapped_column(ForeignKey("rayon.rayon_id"))
+    street: Mapped[str] = mapped_column(VARCHAR(31))
+    building: Mapped[str] = mapped_column(VARCHAR(15))
+    point_type_id: Mapped[int] = mapped_column(ForeignKey("point_type.point_type_id"))
+    point_subtype_id: Mapped[int] = mapped_column(ForeignKey("point_subtype.point_subtype_id"))
+    point_subsubtype_id: Mapped[int] = mapped_column(ForeignKey("point_subsubtype.point_subsubtype_id"))
+    description: Mapped[str] = mapped_column(Text)
 
-    rayon = relationship("Rayon", back_populates="point")
-    street = relationship("Street", back_populates="point")
-    point_subsubtype = relationship("PointSubSubType", back_populates="point")
-    author = relationship("Author", secondary=Author2Point, back_populates="point")
-    notes = relationship("Note", secondary=NoteToPoint, back_populates="point")
+    rayon: Mapped["Rayon"] = relationship(back_populates="points")
+    point_type: Mapped["PointType"] = relationship(back_populates="points")
+    point_subtype: Mapped["PointSubType"] = relationship(back_populates="points")
+    point_subsubtype: Mapped["PointSubSubType"] = relationship(back_populates="points")
+    notes: Mapped["Note"] = relationship(secondary=note2point, back_populates="points")
+    authors: Mapped["Author"] = relationship(secondary=author2point, back_populates="points")
+    point_coordinates: Mapped[List["PointCoordinates"]] = relationship(back_populates="points")
 
 
-# class PointCoordinates(Base):
-#     __tablename__ = "point_coordinates"
-#     point_id = mapped_column(
-#         "point_id", SmallInteger, ForeignKey("point.point_id"), nullable=False
-#     )
-#     coordinates = mapped_column(
-#         "coordinates", Geography(geometry_type='POINT'), nullable=False
-#     )
-#     __table_args__ = (
-#         UniqueConstraint("point_id", "coordinates", name="_point_to_coordinates_uc"),
-#         PrimaryKeyConstraint('point_id'),
-#     )
-#     point = relationship("Point", back_populates="point_coordinates")
-
-
-def init():
-    pass
+class PointCoordinates(Base):
+    __tablename__ = 'point_coordinates'
+    point_id: Mapped[int] = mapped_column(ForeignKey('point.point_id'), primary_key=True)
+    latitude: Mapped[float] = mapped_column(nullable=False, primary_key=True)
+    longitude: Mapped[float] = mapped_column(nullable=False, primary_key=True)
+    points: Mapped["Point"] = relationship(back_populates="point_coordinates")
