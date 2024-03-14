@@ -63,12 +63,14 @@ class Point(ExtendedBaseClass):
     rayon_id: Mapped[int] = mapped_column(ForeignKey("rayon.rayon_id"))
     street: Mapped[str] = mapped_column(VARCHAR(31))
     building: Mapped[str] = mapped_column(VARCHAR(15))
-    point_type_id: Mapped[int] = mapped_column(ForeignKey("point_type.point_type_id"))
+    point_type_id: Mapped[int] = mapped_column(
+        ForeignKey("point_type.point_type_id"), nullable=False
+    )
     point_subtype_id: Mapped[int] = mapped_column(
-        ForeignKey("point_subtype.point_subtype_id")
+        ForeignKey("point_subtype.point_subtype_id"), nullable=True
     )
     point_subsubtype_id: Mapped[int] = mapped_column(
-        ForeignKey("point_subsubtype.point_subsubtype_id")
+        ForeignKey("point_subsubtype.point_subsubtype_id"), nullable=True
     )
     description: Mapped[str] = mapped_column(Text)
 
