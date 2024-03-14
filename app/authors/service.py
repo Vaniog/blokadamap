@@ -20,6 +20,8 @@ from app.authors.models import (
     author2social_class,
 )
 from app.authors.validations import Author as AuthorValidation
+from app.notes.dtos import DiaryDto
+from app.notes.service import NoteService
 
 
 class AuthorService:
@@ -89,6 +91,7 @@ class AuthorService:
             self.db.add(new_author)
             self.db.commit()
             self.db.refresh(new_author)
+
             self.db.execute(
                 author2social_class.insert().values(
                     author_id=new_author.author_id, social_class_id=author.social_class
@@ -126,6 +129,19 @@ class AuthorService:
                 )
             )
             self.db.commit()
-            return new_author
+
+            # create a diary object for this author
+            note_service = NoteService(self.db)
+            new_diary = note_service.create_diary(
+                DiaryDto(
+                    author=new_author.author_id,
+                    source=author.diary_source,
+                    started_at=author.diary_started_at,
+                    finished_at=author.diary_finished_at,
+                )
+            )
+
+            self.db.refresh(new_author)
+            return {"author": new_author, "diary": new_diary}
         except IntegrityError as e:
             raise Exception(str(e.orig))

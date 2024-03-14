@@ -4,6 +4,7 @@ from app.authors.controller import router as authors_router
 from app.authors.models import init as init_authors
 from app.base.models import Base
 from app.database import engine
+from app.notes.controller import router as notes_router
 from app.notes.models import init as init_notes
 from app.point.models import init as init_point
 
@@ -22,3 +23,4 @@ init_db()
 app = FastAPI()
 
 app.include_router(authors_router)
+app.include_router(notes_router)

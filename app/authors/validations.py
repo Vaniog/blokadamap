@@ -25,3 +25,7 @@ class Author(BaseModel):
     occupation: int
     political_party: int
     card: int
+
+    diary_started_at: date  # YYYY-MM-DD
+    diary_finished_at: date  # YYYY-MM-DD
+    diary_source: str
