@@ -1,6 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload
 
+from app.authors.dtos import AuthorDto
 from app.authors.models import (
     Author,
     Card,
@@ -19,7 +20,6 @@ from app.authors.models import (
     author2religion,
     author2social_class,
 )
-from app.authors.dtos import AuthorDto
 from app.notes.dtos import DiaryDto
 from app.notes.service import NoteService
 
