@@ -9,7 +9,7 @@ class SexEnum(str, Enum):
     FEMALE = "F"
 
 
-class Author(BaseModel):
+class AuthorDto(BaseModel):
     last_name: str
     first_name: str
     middle_name: str

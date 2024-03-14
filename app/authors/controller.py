@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.authors.service import AuthorService
-from app.authors.validations import Author as AuthorValidation
+from app.authors.dtos import AuthorDto
 from app.database import get_db
 
 router = APIRouter(prefix="/authors")
@@ -30,7 +30,7 @@ def get_one(id: int, extended: bool = True, db: Session = Depends(get_db)):
 
 
 @router.post("/")
-async def create(author: AuthorValidation, db: Session = Depends(get_db)):
+async def create(author: AuthorDto, db: Session = Depends(get_db)):
     author_service = AuthorService(db)
     try:
         created_author = author_service.create(author)

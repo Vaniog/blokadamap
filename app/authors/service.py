@@ -19,7 +19,7 @@ from app.authors.models import (
     author2religion,
     author2social_class,
 )
-from app.authors.validations import Author as AuthorValidation
+from app.authors.dtos import AuthorDto
 from app.notes.dtos import DiaryDto
 from app.notes.service import NoteService
 
@@ -74,74 +74,74 @@ class AuthorService:
             .first()
         )
 
-    def create(self, author: AuthorValidation):
+    def create(self, dto: AuthorDto):
         try:
-            new_author = Author(
-                last_name=author.last_name,
-                first_name=author.first_name,
-                middle_name=author.middle_name,
-                sex=author.sex,
-                birth_date=author.birth_date,
-                biography=author.biography,
-                has_children=author.has_children,
+            author = Author(
+                last_name=dto.last_name,
+                first_name=dto.first_name,
+                middle_name=dto.middle_name,
+                sex=dto.sex,
+                birth_date=dto.birth_date,
+                biography=dto.biography,
+                has_children=dto.has_children,
                 family_status=self.db.query(FamilyStatus)
-                .filter(FamilyStatus.family_status_id == author.family_status)
+                .filter(FamilyStatus.family_status_id == dto.family_status)
                 .first(),
             )
-            self.db.add(new_author)
+            self.db.add(author)
             self.db.commit()
-            self.db.refresh(new_author)
+            self.db.refresh(author)
 
             self.db.execute(
                 author2social_class.insert().values(
-                    author_id=new_author.author_id, social_class_id=author.social_class
+                    author_id=author.author_id, social_class_id=dto.social_class
                 )
             )
             self.db.execute(
                 author2nationality.insert().values(
-                    author_id=new_author.author_id, nationality_id=author.nationality
+                    author_id=author.author_id, nationality_id=dto.nationality
                 )
             )
             self.db.execute(
                 author2religion.insert().values(
-                    author_id=new_author.author_id, religion_id=author.religion
+                    author_id=author.author_id, religion_id=dto.religion
                 )
             )
             self.db.execute(
                 author2education.insert().values(
-                    author_id=new_author.author_id, education_id=author.education
+                    author_id=author.author_id, education_id=dto.education
                 )
             )
             self.db.execute(
                 author2occupation.insert().values(
-                    author_id=new_author.author_id, occupation_id=author.occupation
+                    author_id=author.author_id, occupation_id=dto.occupation
                 )
             )
             self.db.execute(
                 author2political_party.insert().values(
-                    author_id=new_author.author_id,
-                    political_party_id=author.political_party,
+                    author_id=author.author_id,
+                    political_party_id=dto.political_party,
                 )
             )
             self.db.execute(
                 author2card.insert().values(
-                    author_id=new_author.author_id, card_id=author.card
+                    author_id=author.author_id, card_id=dto.card
                 )
             )
             self.db.commit()
 
             # create a diary object for this author
             note_service = NoteService(self.db)
-            new_diary = note_service.create_diary(
+            diary = note_service.create_diary(
                 DiaryDto(
-                    author=new_author.author_id,
-                    source=author.diary_source,
-                    started_at=author.diary_started_at,
-                    finished_at=author.diary_finished_at,
+                    author=author.author_id,
+                    source=dto.diary_source,
+                    started_at=dto.diary_started_at,
+                    finished_at=dto.diary_finished_at,
                 )
             )
 
-            self.db.refresh(new_author)
-            return {"author": new_author, "diary": new_diary}
+            self.db.refresh(author)
+            return {"author": author, "diary": diary}
         except IntegrityError as e:
             raise Exception(str(e.orig))
