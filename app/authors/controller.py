@@ -5,7 +5,6 @@ from app.authors.service import AuthorService
 from app.authors.validations import Author as AuthorValidation
 from app.database import get_db
 
-app = FastAPI()
 router = APIRouter(prefix="/authors")
 
 
