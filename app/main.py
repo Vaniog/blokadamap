@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from app.authors.controller import router as authors_router
 from app.authors.models import init as init_authors
 from app.base.models import Base
 from app.database import engine
@@ -19,3 +20,5 @@ def init_db():
 
 init_db()
 app = FastAPI()
+
+app.include_router(authors_router)
