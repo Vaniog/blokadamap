@@ -26,6 +26,8 @@ def get_one(id: int, extended: bool = True, db: Session = Depends(get_db)):
 @router.post("/{id}/coordinates")
 def create_coordinates(dto: CoordinatesDto, id: int, db: Session = Depends(get_db)):
     service = PointService(db)
+    if not service.exists(id):
+        raise HTTPException(404)
     return service.create_coordinates(id, dto)
 
 

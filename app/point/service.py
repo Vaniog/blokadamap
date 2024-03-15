@@ -1,3 +1,4 @@
+from sqlalchemy import exists
 from sqlalchemy.orm import Session, joinedload
 
 from app.point.dtos import CoordinatesDto, PointDto
@@ -100,3 +101,6 @@ class PointService:
             .all()
         ]
         return {"point_id": point_id, "coordinates": res}
+
+    def exists(self, point_id: int) -> bool:
+        return self.db.query(exists().where(Point.point_id == point_id)).scalar()
