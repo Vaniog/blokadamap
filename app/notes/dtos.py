@@ -20,6 +20,7 @@ class NoteDto(BaseModel):
     citation: str
     source: str
     tags: List[int]
+    point: int
 
 
 class TagDto(BaseModel):
