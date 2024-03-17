@@ -102,5 +102,11 @@ class PointService:
         ]
         return {"point_id": point_id, "coordinates": res}
 
+    def get_notes(self, point_id: int):
+        point = self.db.query(Point).filter(Point.point_id == point_id).first()
+        if point is None:
+            return None
+        return point.notes
+
     def exists(self, point_id: int) -> bool:
         return self.db.query(exists().where(Point.point_id == point_id)).scalar()

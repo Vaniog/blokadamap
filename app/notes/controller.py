@@ -23,7 +23,6 @@ def get_all(db: Session = Depends(get_db)):
 @router.get("/{id}")
 def get_one(id: int, extended: bool = True, db: Session = Depends(get_db)):
     service = NoteService(db)
-    # TODO: if extended, get by note; else get by geolocation
     res = service.get_by_id(id, extended)
     if res is None:
         raise HTTPException(404)

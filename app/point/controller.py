@@ -31,6 +31,15 @@ def create_coordinates(dto: CoordinatesDto, id: int, db: Session = Depends(get_d
     return service.create_coordinates(id, dto)
 
 
+@router.get("/{id}/notes")
+def get_notes(id: int, db: Session = Depends(get_db)):
+    service = PointService(db)
+    res = service.get_notes(id)
+    if res is None:
+        raise HTTPException(404)
+    return res
+
+
 @router.get("/{id}/coordinates")
 def get_coordinates(id: int, db: Session = Depends(get_db)):
     service = PointService(db)
