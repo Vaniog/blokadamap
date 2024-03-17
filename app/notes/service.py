@@ -8,8 +8,8 @@ from app.notes.models import (
     NoteType,
     Tag,
     Temporality,
-    note2tag,
     note2point,
+    note2tag,
 )
 
 
@@ -65,11 +65,11 @@ class NoteService:
         )
 
     def create_note(self, dto: NoteDto):
-        diary = self.db.query(Diary).filter(Diary.author_id == dto.author).first()
+        diary = self.db.query(Diary).filter(Diary.author_id == dto.author_id).first()
         if diary is None:
             diary = self.create_diary(
                 DiaryDto(
-                    author=dto.author,
+                    author_id=dto.author_id,
                     source="",
                     started_at=dto.created_at,
                     finished_at=dto.created_at,
@@ -78,8 +78,8 @@ class NoteService:
 
         note = Note(
             diary_id=diary.diary_id,
-            note_type_id=dto.note_type,
-            temporality_id=dto.temporality,
+            note_type_id=dto.note_type_id,
+            temporality_id=dto.temporality_id,
             created_at=dto.created_at,
             citation=dto.citation,
             source=dto.source,
@@ -90,11 +90,11 @@ class NoteService:
 
         self.db.execute(
             note2point.insert().values(
-                note_id=note.note_id, point_id=dto.point, description=""
+                note_id=note.note_id, point_id=dto.point_id, description=""
             )
         )
 
-        for tag in dto.tags:
+        for tag in dto.tag_ids:
             self.db.execute(note2tag.insert().values(note_id=note.note_id, tag_id=tag))
 
         self.db.commit()
@@ -103,7 +103,7 @@ class NoteService:
 
     def create_diary(self, diary: DiaryDto):
         new_diary = Diary(
-            author_id=diary.author,
+            author_id=diary.author_id,
             started_at=diary.started_at,
             finished_at=diary.finished_at,
             source=diary.source,

@@ -85,7 +85,7 @@ class AuthorService:
                 biography=dto.biography,
                 has_children=dto.has_children,
                 family_status=self.db.query(FamilyStatus)
-                .filter(FamilyStatus.family_status_id == dto.family_status)
+                .filter(FamilyStatus.family_status_id == dto.family_status_id)
                 .first(),
             )
             self.db.add(author)
@@ -94,38 +94,38 @@ class AuthorService:
 
             self.db.execute(
                 author2social_class.insert().values(
-                    author_id=author.author_id, social_class_id=dto.social_class
+                    author_id=author.author_id, social_class_id=dto.social_class_id
                 )
             )
             self.db.execute(
                 author2nationality.insert().values(
-                    author_id=author.author_id, nationality_id=dto.nationality
+                    author_id=author.author_id, nationality_id=dto.nationality_id
                 )
             )
             self.db.execute(
                 author2religion.insert().values(
-                    author_id=author.author_id, religion_id=dto.religion
+                    author_id=author.author_id, religion_id=dto.religion_id
                 )
             )
             self.db.execute(
                 author2education.insert().values(
-                    author_id=author.author_id, education_id=dto.education
+                    author_id=author.author_id, education_id=dto.education_id
                 )
             )
             self.db.execute(
                 author2occupation.insert().values(
-                    author_id=author.author_id, occupation_id=dto.occupation
+                    author_id=author.author_id, occupation_id=dto.occupation_id
                 )
             )
             self.db.execute(
                 author2political_party.insert().values(
                     author_id=author.author_id,
-                    political_party_id=dto.political_party,
+                    political_party_id=dto.political_party_id,
                 )
             )
             self.db.execute(
                 author2card.insert().values(
-                    author_id=author.author_id, card_id=dto.card
+                    author_id=author.author_id, card_id=dto.card_id
                 )
             )
             self.db.commit()
@@ -134,7 +134,7 @@ class AuthorService:
             note_service = NoteService(self.db)
             diary = note_service.create_diary(
                 DiaryDto(
-                    author=author.author_id,
+                    author_id=author.author_id,
                     source=dto.diary_source,
                     started_at=dto.diary_started_at,
                     finished_at=dto.diary_finished_at,

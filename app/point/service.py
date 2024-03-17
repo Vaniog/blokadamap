@@ -28,9 +28,9 @@ class PointService:
             rayon_id=dto.rayon_id,
             street=dto.street,
             building=dto.building,
-            point_type_id=dto.point_type,
-            point_subtype_id=dto.point_subtype,
-            point_subsubtype_id=dto.point_subsubtype,
+            point_type_id=dto.point_type_id,
+            point_subtype_id=dto.point_subtype_id,
+            point_subsubtype_id=dto.point_subsubtype_id,
             description=dto.description,
         )
         self.db.add(point)

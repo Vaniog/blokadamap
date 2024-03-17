@@ -7,9 +7,9 @@ class PointDto(BaseModel):
     building: str
     latitude: float
     longitude: float | None
-    point_type: int
-    point_subtype: int | None
-    point_subsubtype: int | None
+    point_type_id: int
+    point_subtype_id: int | None
+    point_subsubtype_id: int | None
     name: str
     description: str
 
