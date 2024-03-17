@@ -78,7 +78,9 @@ class Point(ExtendedBaseClass):
     point_type: Mapped["PointType"] = relationship(back_populates="points")
     point_subtype: Mapped["PointSubType"] = relationship(back_populates="points")
     point_subsubtype: Mapped["PointSubSubType"] = relationship(back_populates="points")
-    notes: Mapped["Note"] = relationship(secondary=note2point, back_populates="points")
+    notes: Mapped[List["Note"]] = relationship(
+        secondary=note2point, back_populates="points"
+    )
     authors: Mapped["Author"] = relationship(
         secondary=author2point, back_populates="points"
     )
