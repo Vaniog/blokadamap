@@ -31,6 +31,7 @@ def get_one(id: int, extended: bool = True, db: Session = Depends(get_db)):
 
 @router.post("/")
 async def create(author: AuthorDto, db: Session = Depends(get_db)):
+    author.validate_ids(db)
     author_service = AuthorService(db)
     try:
         created_author = author_service.create(author)

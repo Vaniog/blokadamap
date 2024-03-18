@@ -31,6 +31,7 @@ def get_one(id: int, extended: bool = True, db: Session = Depends(get_db)):
 
 @router.post("/")
 def create(note: NoteDto, db: Session = Depends(get_db)):
+    note.validate_ids(db)
     service = NoteService(db)
     try:
         created_note = service.create_note(note)

@@ -10,6 +10,7 @@ router = APIRouter(prefix="/points")
 
 @router.post("/")
 def create(dto: PointDto, db: Session = Depends(get_db)):
+    dto.validate_ids(db)
     service = PointService(db)
     return service.create(dto)
 

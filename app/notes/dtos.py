@@ -2,6 +2,12 @@ from datetime import date
 from typing import List
 
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from app.authors.models import Author
+from app.base.utils import check_id_exists_raise
+from app.notes.models import NoteType, Tag, Temporality
+from app.point.models import Point
 
 
 class DiaryDto(BaseModel):
@@ -21,6 +27,15 @@ class NoteDto(BaseModel):
     source: str
     tag_ids: List[int]
     point_id: int
+
+    def validate_ids(self, db: Session):
+        check_id_exists_raise(db, Author, self.author_id)
+        check_id_exists_raise(db, NoteType, self.note_type_id)
+        check_id_exists_raise(db, Temporality, self.temporality_id)
+        for tag_id in self.tag_ids:
+            check_id_exists_raise(db, Tag, tag_id)
+        check_id_exists_raise(db, Point, self.point_id)
+        return 1
 
 
 class TagDto(BaseModel):
