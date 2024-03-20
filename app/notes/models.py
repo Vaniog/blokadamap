@@ -35,7 +35,7 @@ class Note(Base):
         ForeignKey("temporality.temporality_id")
     )
     created_at: Mapped[datetime.date] = mapped_column(nullable=False)
-    citation: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
+    citation: Mapped[str] = mapped_column(Text, nullable=False)
     source: Mapped[str] = mapped_column(nullable=False)
 
     note_type: Mapped["NoteType"] = relationship(back_populates="notes")
