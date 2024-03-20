@@ -15,7 +15,7 @@ class PointDto(BaseModel):
     point_subtype_id: int | None
     point_subsubtype_id: int | None
     name: str
-    description: str
+    description: str | None
 
     def validate_ids(self, db: Session) -> None:
         check_id_exists_raise(db, Rayon, self.rayon_id)

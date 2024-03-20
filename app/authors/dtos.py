@@ -1,5 +1,6 @@
 from datetime import date
 from enum import Enum
+from typing import List
 
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -31,13 +32,13 @@ class AuthorDto(BaseModel):
     biography: str
     has_children: bool
     family_status_id: int
-    social_class_id: int
-    nationality_id: int
-    religion_id: int
-    education_id: int
-    occupation_id: int
-    political_party_id: int
-    card_id: int
+    social_class_ids: List[int]
+    nationality_ids: List[int]
+    religion_ids: List[int]
+    education_ids: List[int]
+    occupation_ids: List[int]
+    political_party_ids: List[int]
+    card_ids: List[int]
 
     diary_started_at: date  # YYYY-MM-DD
     diary_finished_at: date  # YYYY-MM-DD
@@ -45,10 +46,17 @@ class AuthorDto(BaseModel):
 
     def validate_ids(self, db: Session) -> None:
         check_id_exists_raise(db, FamilyStatus, self.family_status_id)
-        check_id_exists_raise(db, SocialClass, self.social_class_id)
-        check_id_exists_raise(db, Nationality, self.nationality_id)
-        check_id_exists_raise(db, Religion, self.religion_id)
-        check_id_exists_raise(db, Education, self.education_id)
-        check_id_exists_raise(db, Occupation, self.occupation_id)
-        check_id_exists_raise(db, PoliticalParty, self.political_party_id)
-        check_id_exists_raise(db, Card, self.card_id)
+        for id in self.social_class_ids:
+            check_id_exists_raise(db, SocialClass, id)
+        for id in self.nationality_ids:
+            check_id_exists_raise(db, Nationality, id)
+        for id in self.religion_ids:
+            check_id_exists_raise(db, Religion, id)
+        for id in self.education_ids:
+            check_id_exists_raise(db, Education, id)
+        for id in self.occupation_ids:
+            check_id_exists_raise(db, Occupation, id)
+        for id in self.political_party_ids:
+            check_id_exists_raise(db, PoliticalParty, id)
+        for id in self.card_ids:
+            check_id_exists_raise(db, Card, id)

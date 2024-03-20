@@ -1,7 +1,7 @@
 import datetime
 from typing import TYPE_CHECKING, List
 
-from sqlalchemy import Column, ForeignKey, Table, Text
+from sqlalchemy import ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.base.models import *
@@ -10,20 +10,20 @@ if TYPE_CHECKING:
     from app.authors.models import Author
     from app.point.models import Point
 
-note2tag = Table(
-    "note_to_tag",
-    Base.metadata,
-    Column("note_id", ForeignKey("note.note_id"), primary_key=True),
-    Column("tag_id", ForeignKey("tag.tag_id"), primary_key=True),
-)
 
-note2point = Table(
-    "note_to_point",
-    Base.metadata,
-    Column("note_id", ForeignKey("note.note_id"), primary_key=True),
-    Column("point_id", ForeignKey("point.point_id"), primary_key=True),
-    Column("description", Text, nullable=False),
-)
+class NoteToTag(Base):
+    __tablename__ = "note_to_tag"
+    note_id: Mapped[int] = mapped_column(ForeignKey("note.note_id"), primary_key=True)
+    tag_id: Mapped[int] = mapped_column(ForeignKey("tag.tag_id"), primary_key=True)
+
+
+class NoteToPoint(Base):
+    __tablename__ = "note_to_point"
+    note_id: Mapped[int] = mapped_column(ForeignKey("note.note_id"), primary_key=True)
+    point_id: Mapped[int] = mapped_column(
+        ForeignKey("point.point_id"), primary_key=True
+    )
+    description: Mapped[str] = mapped_column(Text, nullable=False)
 
 
 class Note(Base):
@@ -41,9 +41,11 @@ class Note(Base):
     note_type: Mapped["NoteType"] = relationship(back_populates="notes")
     temporality: Mapped["Temporality"] = relationship(back_populates="notes")
     diary: Mapped["Diary"] = relationship(back_populates="notes")
-    tags: Mapped[List["Tag"]] = relationship(secondary=note2tag, back_populates="notes")
+    tags: Mapped[List["Tag"]] = relationship(
+        secondary=NoteToTag.__tablename__, back_populates="notes"
+    )
     points: Mapped[List["Point"]] = relationship(
-        secondary=note2point, back_populates="notes"
+        secondary=NoteToPoint.__tablename__, back_populates="notes"
     )
 
 
@@ -63,7 +65,7 @@ class Tag(ExtendedBaseClass):
     __tablename__ = "tag"
     tag_id: Mapped[intpk]
     notes: Mapped[List["Note"]] = relationship(
-        secondary=note2tag, back_populates="tags"
+        secondary=NoteToTag.__tablename__, back_populates="tags"
     )
 
 

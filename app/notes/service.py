@@ -2,15 +2,7 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.authors.models import Author
 from app.notes.dtos import DiaryDto, NoteDto, TagDto
-from app.notes.models import (
-    Diary,
-    Note,
-    NoteType,
-    Tag,
-    Temporality,
-    note2point,
-    note2tag,
-)
+from app.notes.models import Diary, Note, NoteToPoint, NoteType, Tag, Temporality
 
 
 class NoteService:
@@ -88,14 +80,16 @@ class NoteService:
         self.db.commit()
         self.db.refresh(note)
 
-        self.db.execute(
-            note2point.insert().values(
-                note_id=note.note_id, point_id=dto.point_id, description=""
+        for ntp in dto.note_to_points:
+            self.db.add(
+                NoteToPoint(
+                    note_id=note.note_id,
+                    point_id=ntp.point_id,
+                    description=ntp.description,
+                )
             )
-        )
 
-        for tag in dto.tag_ids:
-            self.db.execute(note2tag.insert().values(note_id=note.note_id, tag_id=tag))
+        note.tags.extend(self.db.query(Tag).filter(Tag.tag_id.in_(dto.tag_ids)).all())
 
         self.db.commit()
         self.db.refresh(note)

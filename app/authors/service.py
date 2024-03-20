@@ -12,13 +12,6 @@ from app.authors.models import (
     PoliticalParty,
     Religion,
     SocialClass,
-    author2card,
-    author2education,
-    author2nationality,
-    author2occupation,
-    author2political_party,
-    author2religion,
-    author2social_class,
 )
 from app.notes.dtos import DiaryDto
 from app.notes.service import NoteService
@@ -92,42 +85,40 @@ class AuthorService:
             self.db.commit()
             self.db.refresh(author)
 
-            self.db.execute(
-                author2social_class.insert().values(
-                    author_id=author.author_id, social_class_id=dto.social_class_id
-                )
+            author.social_classes.extend(
+                self.db.query(SocialClass)
+                .filter(SocialClass.social_class_id.in_(dto.social_class_ids))
+                .all()
             )
-            self.db.execute(
-                author2nationality.insert().values(
-                    author_id=author.author_id, nationality_id=dto.nationality_id
-                )
+            author.nationalities.extend(
+                self.db.query(Nationality)
+                .filter(Nationality.nationality_id.in_(dto.nationality_ids))
+                .all()
             )
-            self.db.execute(
-                author2religion.insert().values(
-                    author_id=author.author_id, religion_id=dto.religion_id
-                )
+            author.religions.extend(
+                self.db.query(Religion)
+                .filter(Religion.religion_id.in_(dto.religion_ids))
+                .all()
             )
-            self.db.execute(
-                author2education.insert().values(
-                    author_id=author.author_id, education_id=dto.education_id
-                )
+            author.education.extend(
+                self.db.query(Education)
+                .filter(Education.education_id.in_(dto.education_ids))
+                .all()
             )
-            self.db.execute(
-                author2occupation.insert().values(
-                    author_id=author.author_id, occupation_id=dto.occupation_id
-                )
+            author.occupation.extend(
+                self.db.query(Occupation)
+                .filter(Occupation.occupation_id.in_(dto.occupation_ids))
+                .all()
             )
-            self.db.execute(
-                author2political_party.insert().values(
-                    author_id=author.author_id,
-                    political_party_id=dto.political_party_id,
-                )
+            author.political_parties.extend(
+                self.db.query(PoliticalParty)
+                .filter(PoliticalParty.political_party_id.in_(dto.political_party_ids))
+                .all()
             )
-            self.db.execute(
-                author2card.insert().values(
-                    author_id=author.author_id, card_id=dto.card_id
-                )
+            author.cards.extend(
+                self.db.query(Card).filter(Card.card_id.in_(dto.card_ids)).all()
             )
+
             self.db.commit()
 
             # create a diary object for this author

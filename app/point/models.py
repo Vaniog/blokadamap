@@ -3,9 +3,9 @@ from typing import TYPE_CHECKING, List, Optional
 from sqlalchemy import ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.authors.models import author2point
+from app.authors.models import AuthorToPoint
 from app.base.models import *
-from app.notes.models import note2point
+from app.notes.models import NoteToPoint
 
 if TYPE_CHECKING:
     from app.authors.models import Author
@@ -72,17 +72,17 @@ class Point(ExtendedBaseClass):
     point_subsubtype_id: Mapped[int] = mapped_column(
         ForeignKey("point_subsubtype.point_subsubtype_id"), nullable=True
     )
-    description: Mapped[str] = mapped_column(Text)
+    description: Mapped[str] = mapped_column(Text, nullable=True)
 
     rayon: Mapped["Rayon"] = relationship(back_populates="points")
     point_type: Mapped["PointType"] = relationship(back_populates="points")
     point_subtype: Mapped["PointSubType"] = relationship(back_populates="points")
     point_subsubtype: Mapped["PointSubSubType"] = relationship(back_populates="points")
     notes: Mapped[List["Note"]] = relationship(
-        secondary=note2point, back_populates="points"
+        secondary=NoteToPoint.__tablename__, back_populates="points"
     )
     authors: Mapped["Author"] = relationship(
-        secondary=author2point, back_populates="points"
+        secondary=AuthorToPoint.__tablename__, back_populates="points"
     )
     point_coordinates: Mapped[List["PointCoordinates"]] = relationship(
         back_populates="points"

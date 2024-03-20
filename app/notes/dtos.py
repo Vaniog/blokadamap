@@ -18,6 +18,14 @@ class DiaryDto(BaseModel):
     author_id: int
 
 
+class Note2PointDto(BaseModel):
+    point_id: int
+    description: str
+
+    def validate_ids(self, db: Session):
+        check_id_exists_raise(db, Point, self.point_id)
+
+
 class NoteDto(BaseModel):
     author_id: int
     note_type_id: int
@@ -26,7 +34,7 @@ class NoteDto(BaseModel):
     citation: str
     source: str
     tag_ids: List[int]
-    point_id: int
+    note_to_points: List[Note2PointDto]
 
     def validate_ids(self, db: Session):
         check_id_exists_raise(db, Author, self.author_id)
@@ -34,8 +42,8 @@ class NoteDto(BaseModel):
         check_id_exists_raise(db, Temporality, self.temporality_id)
         for tag_id in self.tag_ids:
             check_id_exists_raise(db, Tag, tag_id)
-        check_id_exists_raise(db, Point, self.point_id)
-        return 1
+        for note_to_point in self.note_to_points:
+            note_to_point.validate_ids(db)
 
 
 class TagDto(BaseModel):

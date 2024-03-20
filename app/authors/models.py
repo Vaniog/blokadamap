@@ -1,7 +1,7 @@
 import datetime
 from typing import TYPE_CHECKING, List
 
-from sqlalchemy import Column, Date, ForeignKey, String, Table, Text
+from sqlalchemy import Date, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.base.models import *
@@ -10,72 +10,86 @@ if TYPE_CHECKING:
     from app.notes.models import Diary
     from app.point.models import Point
 
-author2political_party = Table(
-    "author_to_political_party",
-    Base.metadata,
-    Column("author_id", ForeignKey("author.author_id"), primary_key=True),
-    Column(
-        "political_party_id",
-        ForeignKey("political_party.political_party_id"),
-        primary_key=True,
-    ),
-)
 
-author2religion = Table(
-    "author_to_religion",
-    Base.metadata,
-    Column("author_id", ForeignKey("author.author_id"), primary_key=True),
-    Column("religion_id", ForeignKey("religion.religion_id"), primary_key=True),
-)
+class AuthorToPoliticalParty(Base):
+    __tablename__ = "author_to_political_party"
+    author_id: Mapped[int] = mapped_column(
+        ForeignKey("author.author_id"), primary_key=True
+    )
+    political_party_id: Mapped[int] = mapped_column(
+        ForeignKey("political_party.political_party_id"), primary_key=True
+    )
 
-author2social_class = Table(
-    "author_to_social_class",
-    Base.metadata,
-    Column("author_id", ForeignKey("author.author_id"), primary_key=True),
-    Column(
-        "social_class_id", ForeignKey("social_class.social_class_id"), primary_key=True
-    ),
-)
 
-author2nationality = Table(
-    "author_to_nationality",
-    Base.metadata,
-    Column("author_id", ForeignKey("author.author_id"), primary_key=True),
-    Column(
-        "nationality_id", ForeignKey("nationality.nationality_id"), primary_key=True
-    ),
-)
+class AuthorToReligion(Base):
+    __tablename__ = "author_to_religion"
+    author_id: Mapped[int] = mapped_column(
+        ForeignKey("author.author_id"), primary_key=True
+    )
+    religion_id: Mapped[int] = mapped_column(
+        ForeignKey("religion.religion_id"), primary_key=True
+    )
 
-author2education = Table(
-    "author_to_education",
-    Base.metadata,
-    Column("author_id", ForeignKey("author.author_id"), primary_key=True),
-    Column("education_id", ForeignKey("education.education_id"), primary_key=True),
-)
 
-author2occupation = Table(
-    "author_to_occupation",
-    Base.metadata,
-    Column("author_id", ForeignKey("author.author_id"), primary_key=True),
-    Column("occupation_id", ForeignKey("occupation.occupation_id"), primary_key=True),
-)
+class AuthorToSocialClass(Base):
+    __tablename__ = "author_to_social_class"
+    author_id: Mapped[int] = mapped_column(
+        ForeignKey("author.author_id"), primary_key=True
+    )
+    social_class_id: Mapped[int] = mapped_column(
+        ForeignKey("social_class.social_class_id"), primary_key=True
+    )
 
-author2card = Table(
-    "author_to_card",
-    Base.metadata,
-    Column("author_id", ForeignKey("author.author_id"), primary_key=True),
-    Column("card_id", ForeignKey("card.card_id"), primary_key=True),
-)
 
-author2point = Table(
-    "author_to_point",
-    Base.metadata,
-    Column("author_id", ForeignKey("author.author_id"), primary_key=True),
-    Column("point_id", ForeignKey("point.point_id"), primary_key=True),
-    Column("from", Date, nullable=False),
-    Column("to", Date, nullable=False),
-    Column("description", Text, nullable=False),
-)
+class AuthorToNationality(Base):
+    __tablename__ = "author_to_nationality"
+    author_id: Mapped[int] = mapped_column(
+        ForeignKey("author.author_id"), primary_key=True
+    )
+    nationality_id: Mapped[int] = mapped_column(
+        ForeignKey("nationality.nationality_id"), primary_key=True
+    )
+
+
+class AuthorToEducation(Base):
+    __tablename__ = "author_to_education"
+    author_id: Mapped[int] = mapped_column(
+        ForeignKey("author.author_id"), primary_key=True
+    )
+    education_id: Mapped[int] = mapped_column(
+        ForeignKey("education.education_id"), primary_key=True
+    )
+
+
+class AuthorToOccupation(Base):
+    __tablename__ = "author_to_occupation"
+    author_id: Mapped[int] = mapped_column(
+        ForeignKey("author.author_id"), primary_key=True
+    )
+    occupation_id: Mapped[int] = mapped_column(
+        ForeignKey("occupation.occupation_id"), primary_key=True
+    )
+
+
+class AuthorToCard(Base):
+    __tablename__ = "author_to_card"
+    author_id: Mapped[int] = mapped_column(
+        ForeignKey("author.author_id"), primary_key=True
+    )
+    card_id: Mapped[int] = mapped_column(ForeignKey("card.card_id"), primary_key=True)
+
+
+class AuthorToPoint(Base):
+    __tablename__ = "author_to_point"
+    author_id: Mapped[int] = mapped_column(
+        ForeignKey("author.author_id"), primary_key=True
+    )
+    point_id: Mapped[int] = mapped_column(
+        ForeignKey("point.point_id"), primary_key=True
+    )
+    from_date: Mapped[Date] = mapped_column(Date, nullable=False)
+    to_date: Mapped[Date] = mapped_column(Date, nullable=False)
+    description: Mapped[Text] = mapped_column(Text, nullable=False)
 
 
 class Author(Base):
@@ -95,28 +109,28 @@ class Author(Base):
     family_status: Mapped["FamilyStatus"] = relationship(back_populates="authors")
     diaries: Mapped[List["Diary"]] = relationship(back_populates="author")
     political_parties: Mapped[List["PoliticalParty"]] = relationship(
-        secondary=author2political_party, back_populates="authors"
+        secondary=AuthorToPoliticalParty.__tablename__, back_populates="authors"
     )
     religions: Mapped[List["Religion"]] = relationship(
-        secondary=author2religion, back_populates="authors"
+        secondary=AuthorToReligion.__tablename__, back_populates="authors"
     )
     social_classes: Mapped[List["SocialClass"]] = relationship(
-        secondary=author2social_class, back_populates="authors"
+        secondary=AuthorToSocialClass.__tablename__, back_populates="authors"
     )
     nationalities: Mapped[List["Nationality"]] = relationship(
-        secondary=author2nationality, back_populates="authors"
+        secondary=AuthorToNationality.__tablename__, back_populates="authors"
     )
     education: Mapped[List["Education"]] = relationship(
-        secondary=author2education, back_populates="authors"
+        secondary=AuthorToEducation.__tablename__, back_populates="authors"
     )
     occupation: Mapped[List["Occupation"]] = relationship(
-        secondary=author2occupation, back_populates="authors"
+        secondary=AuthorToOccupation.__tablename__, back_populates="authors"
     )
     cards: Mapped[List["Card"]] = relationship(
-        secondary=author2card, back_populates="authors"
+        secondary=AuthorToCard.__tablename__, back_populates="authors"
     )
     points: Mapped[List["Point"]] = relationship(
-        secondary=author2point, back_populates="authors"
+        secondary=AuthorToPoint.__tablename__, back_populates="authors"
     )
 
 
@@ -130,7 +144,8 @@ class PoliticalParty(ExtendedBaseClass):
     __tablename__ = "political_party"
     political_party_id: Mapped[intpk]
     authors: Mapped[List["Author"]] = relationship(
-        secondary=author2political_party, back_populates="political_parties"
+        secondary=AuthorToPoliticalParty.__tablename__,
+        back_populates="political_parties",
     )
 
 
@@ -138,7 +153,7 @@ class Religion(ExtendedBaseClass):
     __tablename__ = "religion"
     religion_id: Mapped[intpk]
     authors: Mapped[List["Author"]] = relationship(
-        secondary=author2religion, back_populates="religions"
+        secondary=AuthorToReligion.__tablename__, back_populates="religions"
     )
 
 
@@ -146,7 +161,7 @@ class SocialClass(ExtendedBaseClass):
     __tablename__ = "social_class"
     social_class_id: Mapped[intpk]
     authors: Mapped[List["Author"]] = relationship(
-        secondary=author2social_class, back_populates="social_classes"
+        secondary=AuthorToSocialClass.__tablename__, back_populates="social_classes"
     )
 
 
@@ -154,7 +169,7 @@ class Nationality(ExtendedBaseClass):
     __tablename__ = "nationality"
     nationality_id: Mapped[intpk]
     authors: Mapped[List["Author"]] = relationship(
-        secondary=author2nationality, back_populates="nationalities"
+        secondary=AuthorToNationality.__tablename__, back_populates="nationalities"
     )
 
 
@@ -162,7 +177,7 @@ class Education(ExtendedBaseClass):
     __tablename__ = "education"
     education_id: Mapped[intpk]
     authors: Mapped[List["Author"]] = relationship(
-        secondary=author2education, back_populates="education"
+        secondary=AuthorToEducation.__tablename__, back_populates="education"
     )
 
 
@@ -170,7 +185,7 @@ class Occupation(ExtendedBaseClass):
     __tablename__ = "occupation"
     occupation_id: Mapped[intpk]
     authors: Mapped[List["Author"]] = relationship(
-        secondary=author2occupation, back_populates="occupation"
+        secondary=AuthorToOccupation.__tablename__, back_populates="occupation"
     )
 
 
@@ -178,7 +193,7 @@ class Card(ExtendedBaseClass):
     __tablename__ = "card"
     card_id: Mapped[intpk]
     authors: Mapped[List["Author"]] = relationship(
-        secondary=author2card, back_populates="cards"
+        secondary=AuthorToCard.__tablename__, back_populates="cards"
     )
 
 
