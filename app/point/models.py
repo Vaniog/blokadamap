@@ -3,9 +3,9 @@ from typing import TYPE_CHECKING, List, Optional
 from sqlalchemy import ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.authors.models import author2point
+from app.authors.models import AuthorToPoint
 from app.base.models import *
-from app.notes.models import note2point
+from app.notes.models import NoteToPoint
 
 if TYPE_CHECKING:
     from app.authors.models import Author
@@ -63,22 +63,26 @@ class Point(ExtendedBaseClass):
     rayon_id: Mapped[int] = mapped_column(ForeignKey("rayon.rayon_id"))
     street: Mapped[str] = mapped_column(VARCHAR(31))
     building: Mapped[str] = mapped_column(VARCHAR(15))
-    point_type_id: Mapped[int] = mapped_column(ForeignKey("point_type.point_type_id"))
+    point_type_id: Mapped[int] = mapped_column(
+        ForeignKey("point_type.point_type_id"), nullable=False
+    )
     point_subtype_id: Mapped[int] = mapped_column(
-        ForeignKey("point_subtype.point_subtype_id")
+        ForeignKey("point_subtype.point_subtype_id"), nullable=True
     )
     point_subsubtype_id: Mapped[int] = mapped_column(
-        ForeignKey("point_subsubtype.point_subsubtype_id")
+        ForeignKey("point_subsubtype.point_subsubtype_id"), nullable=True
     )
-    description: Mapped[str] = mapped_column(Text)
+    description: Mapped[str] = mapped_column(Text, nullable=True)
 
     rayon: Mapped["Rayon"] = relationship(back_populates="points")
     point_type: Mapped["PointType"] = relationship(back_populates="points")
     point_subtype: Mapped["PointSubType"] = relationship(back_populates="points")
     point_subsubtype: Mapped["PointSubSubType"] = relationship(back_populates="points")
-    notes: Mapped["Note"] = relationship(secondary=note2point, back_populates="points")
+    notes: Mapped[List["Note"]] = relationship(
+        secondary=NoteToPoint.__tablename__, back_populates="points"
+    )
     authors: Mapped["Author"] = relationship(
-        secondary=author2point, back_populates="points"
+        secondary=AuthorToPoint.__tablename__, back_populates="points"
     )
     point_coordinates: Mapped[List["PointCoordinates"]] = relationship(
         back_populates="points"
