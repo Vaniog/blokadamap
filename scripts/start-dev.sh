@@ -3,4 +3,4 @@
 APP_HOST=${HOST:-0.0.0.0}
 APP_PORT=${APP_PORT:-8080}
 
-exec uvicorn app.main:app --reload --proxy-headers --host "$APP_HOST" --port "$APP_PORT"
+uvicorn app.main:app --reload --proxy-headers --host "$APP_HOST" --port "$APP_PORT"
