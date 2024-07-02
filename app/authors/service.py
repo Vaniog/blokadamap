@@ -1,7 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, joinedload
 
-from app.authors.dtos import AuthorDto
+from app.authors.dtos import AuthorDTO
 from app.authors.models import (
     Author,
     Card,
@@ -13,7 +13,7 @@ from app.authors.models import (
     Religion,
     SocialClass,
 )
-from app.notes.dtos import DiaryDto
+from app.notes.dtos import DiaryDTO
 from app.notes.service import NoteService
 
 
@@ -67,7 +67,7 @@ class AuthorService:
             .first()
         )
 
-    def create(self, dto: AuthorDto):
+    def create(self, dto: AuthorDTO):
         try:
             author = Author(
                 last_name=dto.last_name,
@@ -124,7 +124,7 @@ class AuthorService:
             # create a diary object for this author
             note_service = NoteService(self.db)
             diary = note_service.create_diary(
-                DiaryDto(
+                DiaryDTO(
                     author_id=author.author_id,
                     source=dto.diary_source,
                     started_at=dto.diary_started_at,
