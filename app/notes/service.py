@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session, joinedload
 
 from app.authors.models import Author
-from app.notes.dtos import DiaryDto, NoteDto, TagDto
+from app.notes.dtos import DiaryDTO, NoteDTO, TagDTO
 from app.notes.models import Diary, Note, NoteToPoint, NoteType, Tag, Temporality
 
 
@@ -56,11 +56,11 @@ class NoteService:
             ._asdict()  # type: ignore
         )
 
-    def create_note(self, dto: NoteDto):
+    def create_note(self, dto: NoteDTO):
         diary = self.db.query(Diary).filter(Diary.author_id == dto.author_id).first()
         if diary is None:
             diary = self.create_diary(
-                DiaryDto(
+                DiaryDTO(
                     author_id=dto.author_id,
                     source="",
                     started_at=dto.created_at,
@@ -95,7 +95,7 @@ class NoteService:
         self.db.refresh(note)
         return note
 
-    def create_diary(self, diary: DiaryDto):
+    def create_diary(self, diary: DiaryDTO):
         new_diary = Diary(
             author_id=diary.author_id,
             started_at=diary.started_at,
@@ -107,7 +107,7 @@ class NoteService:
         self.db.refresh(new_diary)
         return new_diary
 
-    def create_tag(self, dto: TagDto):
+    def create_tag(self, dto: TagDTO):
         new_tag = Tag(name=dto.name)
         self.db.add(new_tag)
         self.db.commit()

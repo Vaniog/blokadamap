@@ -1,7 +1,7 @@
 from sqlalchemy import exists
 from sqlalchemy.orm import Session, joinedload
 
-from app.point.dtos import CoordinatesDto, PointDto
+from app.point.dtos import CoordinatesDTO, PointDTO
 from app.point.models import Point, PointCoordinates, PointSubType, PointType
 
 
@@ -22,7 +22,7 @@ class PointService:
             .all()
         )
 
-    def create(self, dto: PointDto):
+    def create(self, dto: PointDTO):
         point = Point(
             name=dto.name,
             rayon_id=dto.rayon_id,
@@ -80,7 +80,7 @@ class PointService:
             .first()
         )
 
-    def create_coordinates(self, point_id: int, dto: CoordinatesDto):
+    def create_coordinates(self, point_id: int, dto: CoordinatesDTO):
         coordinates = PointCoordinates(
             point_id=point_id,
             latitude=dto.latitude,
@@ -110,3 +110,6 @@ class PointService:
 
     def exists(self, point_id: int) -> bool:
         return self.db.query(exists().where(Point.point_id == point_id)).scalar()
+    
+    def get_all(self):
+        return self.db.query(Point).all()

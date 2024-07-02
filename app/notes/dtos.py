@@ -10,7 +10,7 @@ from app.notes.models import NoteType, Tag, Temporality
 from app.point.models import Point
 
 
-class DiaryDto(BaseModel):
+class DiaryDTO(BaseModel):
     # TODO: validate dates (min and max)
     started_at: date  # YYYY-MM-DD
     finished_at: date  # YYYY-MM-DD
@@ -18,15 +18,14 @@ class DiaryDto(BaseModel):
     author_id: int
 
 
-class Note2PointDto(BaseModel):
+class Note2PointDTO(BaseModel):
     point_id: int
     description: str
 
     def validate_ids(self, db: Session):
         check_id_exists_raise(db, Point, self.point_id)
 
-
-class NoteDto(BaseModel):
+class NoteDTO(BaseModel):
     author_id: int
     note_type_id: int
     temporality_id: int
@@ -34,7 +33,7 @@ class NoteDto(BaseModel):
     citation: str
     source: str
     tag_ids: List[int]
-    note_to_points: List[Note2PointDto]
+    note_to_points: List[Note2PointDTO]
 
     def validate_ids(self, db: Session):
         check_id_exists_raise(db, Author, self.author_id)
@@ -45,6 +44,59 @@ class NoteDto(BaseModel):
         for note_to_point in self.note_to_points:
             note_to_point.validate_ids(db)
 
+    class Config:
+        schema_extra = {
+            "example": {
+                "author_id": 1,
+                "note_type_id": 1,
+                "temporality_id": 1,
+                "created_at": "1942-08-09",
+                "citation": "string",
+                "source": "string",
+                "tag_ids": [
+                    0, 
+                ],
+                "note_to_points": [
+                    {
+                    "point_id": 1,
+                    "description": "string"
+                    }
+                ]
+            }       
+        }
 
-class TagDto(BaseModel):
+class ReducedNoteDTO(BaseModel):
+    author_id: int
+    created_at: date
+    citation: str
+
+class ReducedNoteResponseDTO(BaseModel):
+    note_id: int
+    note_info: ReducedNoteDTO
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "note_id": 1,
+                "note_info": {
+                    "author_id": 1,
+                    "created_at": "1942-08-09",
+                    "citation": "string"
+                }
+            }
+        }
+
+class TagDTO(BaseModel):
     name: str
+
+class NoteFiltersDTO(BaseModel):
+    tag_ids: List[int]
+    note_type_id: List[int]
+    temporality_id: List[int]
+
+class NoteResponseDTO(BaseModel):
+    note_id: int
+    note_info: NoteDTO
+
+class BaseResponse(BaseModel):
+    description: str
